@@ -3,45 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FinanceHub - Cập nhật mục Khác</title>
+    <title>FinanceHub - Hạn Mức & Dark Mode</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --primary: #3b82f6; --income: #10b981; --expense: #ef4444;
+            --primary: #3b82f6; --income: #10b981; --expense: #ef4444; --warning: #f59e0b;
+            --success-gold: #eab308;
             --glass: rgba(255, 255, 255, 0.75);
             --bg: linear-gradient(135deg, #e0f2f1 0%, #fce4ec 100%);
+            --text: #1e293b; --text-light: #64748b; --border: rgba(255,255,255,0.3);
+            --card-item: rgba(255, 255, 255, 0.5);
         }
+
+        /* Thêm cấu hình biến màu cho Dark Mode */
+        body.dark-mode {
+            --bg: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            --glass: rgba(30, 41, 59, 0.7);
+            --text: #f1f5f9; --text-light: #94a3b8; --border: rgba(255,255,255,0.05);
+            --card-item: rgba(15, 23, 42, 0.6);
+        }
+
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg); min-height: 100vh; display: flex; padding: 20px; color: #1e293b; }
+        body { background: var(--bg); min-height: 100vh; display: flex; padding: 20px; color: var(--text); transition: background 0.3s ease; }
 
         /* Sidebar */
         .sidebar {
             width: 260px; background: var(--glass); backdrop-filter: blur(15px);
             border-radius: 24px; padding: 40px 20px; display: flex; flex-direction: column; gap: 10px;
-            border: 1px solid rgba(255,255,255,0.3); position: sticky; top: 20px; height: calc(100vh - 40px);
+            border: 1px solid var(--border); position: sticky; top: 20px; height: calc(100vh - 40px);
         }
-        .nav-item { padding: 14px 20px; border-radius: 15px; cursor: pointer; color: #64748b; display: flex; align-items: center; gap: 12px; font-weight: 600; transition: 0.3s; }
+        .nav-item { padding: 14px 20px; border-radius: 15px; cursor: pointer; color: var(--text-light); display: flex; align-items: center; gap: 12px; font-weight: 600; transition: 0.3s; }
+        body.dark-mode .nav-item.active { background: #334155; color: #60a5fa; }
         .nav-item.active { background: white; color: var(--primary); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
 
         /* Main Content */
         .main-content { flex: 1; padding-left: 30px; display: flex; flex-direction: column; gap: 25px; }
         .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 25px; }
-        .card { background: var(--glass); backdrop-filter: blur(15px); border-radius: 24px; padding: 25px; border: 1px solid rgba(255,255,255,0.3); box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
+        .card { background: var(--glass); backdrop-filter: blur(15px); border-radius: 24px; padding: 25px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
 
         .balance-val { font-size: 45px; font-weight: 800; margin: 15px 0; text-align: center; }
-        input, select { width: 100%; padding: 12px; margin: 8px 0 18px; border-radius: 12px; border: 1px solid #e2e8f0; background: rgba(255,255,255,0.5); outline: none; }
+        input, select { width: 100%; padding: 12px; margin: 8px 0 18px; border-radius: 12px; border: 1px solid #e2e8f0; background: var(--card-item); color: var(--text); outline: none; }
+        body.dark-mode input, body.dark-mode select { border: 1px solid #334155; }
         .btn-primary { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 15px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        .btn-primary:hover { opacity: 0.9; }
 
         .tab-content { display: none; animation: fadeIn 0.4s ease; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .btn-delete { background: #fee2e2; color: #ef4444; border: none; padding: 6px 10px; border-radius: 8px; cursor: pointer; }
+        body.dark-mode .btn-delete { background: #7f1d1d; color: #fca5a5; }
 
-        /* Hiệu ứng cho ô nhập mục Khác */
         #otherCatContainer { display: none; }
+
+        /* Quỹ */
+        .fund-item { margin-bottom: 25px; padding: 20px; background: var(--card-item); border-radius: 20px; border: 1px solid var(--border); }
+        .fund-meta { display: flex; justify-content: space-between; font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+        .progress-bg { width: 100%; height: 12px; background: #e2e8f0; border-radius: 6px; overflow: hidden; margin-bottom: 12px; }
+        body.dark-mode .progress-bg { background: #334155; }
+        .progress-fill { height: 100%; background: var(--income); width: 0%; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        .status-badge { display: inline-block; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 8px; margin-bottom: 15px; }
+        .status-ongoing { background: #e0f2fe; color: #0369a1; }
+        body.dark-mode .status-ongoing { background: #0c4a6e; color: #38bdf8; }
+        .status-completed { background: #fef9c3; color: #a16207; animation: pulse 2s infinite; }
+        body.dark-mode .status-completed { background: #713f12; color: #fef08a; }
+
+        /* Bảng Phân Tích */
+        .analysis-report { width: 100%; border-collapse: collapse; margin-top: 25px; font-size: 14px; }
+        .analysis-report th { text-align: left; padding: 12px; background: rgba(0,0,0,0.03); color: var(--text-light); font-weight: 700; }
+        body.dark-mode .analysis-report th { background: rgba(255,255,255,0.03); }
+        .analysis-report td { padding: 14px 12px; border-bottom: 1px solid rgba(0,0,0,0.04); }
+        .trend-tag { font-weight: 700; font-size: 13px; display: inline-flex; align-items: center; gap: 4px; }
+        .trend-up { color: var(--income); }
+        .trend-down { color: var(--expense); }
+        .trend-neutral { color: var(--text-light); font-weight: normal; }
+
+        /* Hạn mức nguy hiểm */
+        .budget-alert { background: #fee2e2; color: #b91c1c; padding: 10px 15px; border-radius: 12px; font-size: 13px; font-weight: 700; text-align: center; margin-top: 10px; display: none; animation: pulse 2s infinite; }
+        body.dark-mode .budget-alert { background: #7f1d1d; color: #fca5a5; }
+
+        /* Nút switch dark mode kiểu iOS */
+        .switch-container { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+        .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(24px); }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.8; } 100% { opacity: 1; } }
+
+        .fund-controls { display: flex; gap: 10px; align-items: center; margin-top: 10px; }
+        .fund-controls input { width: 140px; margin: 0; padding: 8px 12px; border-radius: 10px; font-size: 14px; }
+        .btn-action { padding: 8px 16px; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 13px; color: white; transition: 0.2s; }
+        .btn-deposit { background: var(--income); }
+        .btn-withdraw { background: var(--warning); }
+        .btn-action:hover { opacity: 0.9; }
+
+        .timestamp { font-size: 11px; color: var(--text-light); display: block; margin-top: 4px; font-weight: 600; }
+        .main-history-table tr { border-bottom: 1px solid rgba(0, 0, 0, 0.05); }
+        .main-history-table td { padding: 12px 0; }
     </style>
 </head>
 <body>
@@ -49,6 +113,7 @@
 <aside class="sidebar">
     <div style="font-size: 22px; font-weight: 800; color: var(--primary); margin-bottom: 30px;">💎 FinanceHub</div>
     <div class="nav-item active" onclick="switchTab(event, 'overview')" data-lang="menu_home">🏠 Tổng quan</div>
+    <div class="nav-item" onclick="switchTab(event, 'funds')" data-lang="menu_funds">🐖 Quỹ mục tiêu</div>
     <div class="nav-item" onclick="switchTab(event, 'analysis')" data-lang="menu_analysis">📈 Phân tích</div>
     <div class="nav-item" onclick="switchTab(event, 'settings')" data-lang="menu_settings">⚙️ Cài đặt</div>
 </aside>
@@ -60,18 +125,19 @@
         <div class="dashboard-grid">
             <div style="display: flex; flex-direction: column; gap: 25px;">
                 <div class="card" style="border-top: 8px solid #bbf7d0; text-align: center;">
-                    <span style="color:#64748b; font-weight:700; font-size:14px;" data-lang="balance_label">SỐ DƯ HIỆN TẠI</span>
+                    <span style="color: var(--text-light); font-weight:700; font-size:14px;" data-lang="balance_label">SỐ DƯ HIỆN TẠI</span>
                     <div class="balance-val" id="mainBalance">0</div>
+
+                    <div id="budgetAlertBox" class="budget-alert">⚠️ Cảnh báo: Tổng chi tiêu tháng này đã vượt hạn mức của bạn!</div>
                 </div>
                 <div class="card">
                     <h3 data-lang="history_label">Hoạt động gần đây</h3>
-                    <table style="width:100%; border-collapse: collapse; margin-top: 15px;"><tbody id="historyBody"></tbody></table>
+                    <table class="main-history-table" style="width:100%; border-collapse: collapse; margin-top: 15px;"><tbody id="historyBody"></tbody></table>
                 </div>
             </div>
 
             <div class="card">
                 <h3 data-lang="add_label">Thêm giao dịch</h3>
-
                 <label style="font-size: 12px; font-weight: 700;">Danh mục</label>
                 <select id="cat" onchange="checkOther(this.value)">
                     <option value="Ăn uống">🍴 Ăn uống</option>
@@ -101,47 +167,106 @@
         </div>
     </div>
 
+    <div id="funds" class="tab-content">
+        <div class="dashboard-grid">
+            <div class="card">
+                <h3>Danh sách Quỹ mục tiêu</h3>
+                <div style="margin-top: 20px;" id="fundListContainer"></div>
+            </div>
+            <div class="card">
+                <h3>Tạo Quỹ Mới</h3>
+                <label style="font-size: 12px; font-weight: 700;">Tên quỹ</label>
+                <input type="text" id="fundNameInput" placeholder="Ví dụ: Quỹ đi chơi, Quỹ mua máy tính...">
+
+                <label style="font-size: 12px; font-weight: 700;">Số tiền mục tiêu cần tích lũy</label>
+                <input type="number" id="fundTargetInput" placeholder="Nhập số tiền mục tiêu...">
+
+                <button class="btn-primary" onclick="createFund()">Khởi tạo quỹ</button>
+            </div>
+        </div>
+    </div>
+
     <div id="analysis" class="tab-content">
         <div class="card" style="width: 100%;">
-            <h3 data-lang="menu_analysis">Phân tích</h3>
-            <div style="height: 400px; margin-top: 20px;"><canvas id="bigChart"></canvas></div>
+            <h3 style="margin-bottom: 5px;">Biểu đồ So sánh Thu chi Hệ thống</h3>
+            <p style="font-size: 13px; color: var(--text-light); margin-bottom: 20px;">Dữ liệu tự động tổng hợp chi tiết qua 12 tháng dựa trên các giao dịch thực tế.</p>
+            <div style="height: 380px; position: relative;"><canvas id="bigChart"></canvas></div>
+
+            <div style="margin-top: 35px;">
+                <h4 style="font-size: 16px; font-weight: 700; margin-bottom: 5px;">📈 Báo cáo tăng trưởng liên tháng (Gốc: Tháng 1)</h4>
+                <p style="font-size: 13px; color: var(--text-light); margin-bottom: 15px;">Tỷ lệ phần trăm thể hiện mức độ chênh lệch thu/chi so với tháng liền kề phía trước.</p>
+                <table class="analysis-report">
+                    <thead>
+                    <tr>
+                        <th>Thời gian</th>
+                        <th>Thu nhập</th>
+                        <th>So với tháng trước</th>
+                        <th>Chi tiêu</th>
+                        <th>So với tháng trước</th>
+                    </tr>
+                    </thead>
+                    <tbody id="growthReportBody"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
     <div id="settings" class="tab-content">
         <div class="card" style="max-width: 500px;">
-            <h3 data-lang="settings_header">Cài đặt</h3>
-            <label style="margin-top:20px; display:block;" data-lang="set_lang">Ngôn ngữ</label>
+            <h3>Cấu hình ứng dụng</h3>
+
+            <div class="switch-container" style="margin-top: 20px;">
+                <span style="font-weight: 600; font-size: 14px;">🌙 Chế độ giao diện tối (Dark Mode)</span>
+                <label class="switch">
+                    <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode(this.checked)">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <label style="font-size: 12px; font-weight: 700; margin-top: 10px; display: block;">Hạn mức chi tiêu tối đa mỗi tháng</label>
+            <input type="number" id="setMonthlyBudget" placeholder="Ví dụ: 10000000 (Để trống nếu không đặt hạn mức)" onchange="updateSettings()">
+
+            <label data-lang="set_lang">Ngôn ngữ</label>
             <select id="setLang" onchange="updateSettings()"><option value="vi">Tiếng Việt</option><option value="en">English</option></select>
+
             <label data-lang="set_curr">Tiền tệ</label>
             <select id="setCurr" onchange="updateSettings()"><option value="VND">VNĐ</option><option value="USD">USD</option></select>
-            <hr style="margin: 25px 0; border: 0.5px solid #eee;">
-            <button class="btn-primary" style="background: var(--expense);" onclick="resetData()" data-lang="btn_reset">Xóa tất cả</button>
+
+            <hr style="margin: 25px 0; border: 0.5px solid rgba(0,0,0,0.1);">
+            <button class="btn-primary" style="background: var(--expense);" onclick="resetData()" data-lang="btn_reset">Xóa tất cả dữ liệu</button>
         </div>
     </div>
 </main>
 
 <script>
     let transactions = JSON.parse(localStorage.getItem('fin_final_v5')) || [];
-    let config = JSON.parse(localStorage.getItem('fin_config')) || { lang: 'vi', curr: 'VND' };
+    // Nâng cấp cấu hình config có sẵn thêm trường darkMode và monthlyBudget
+    let config = JSON.parse(localStorage.getItem('fin_config')) || { lang: 'vi', curr: 'VND', darkMode: false, monthlyBudget: 0 };
+    let funds = JSON.parse(localStorage.getItem('fin_funds')) || [];
     let miniChart, bigChart;
 
     const langPack = {
         vi: {
-            menu_home: "🏠 Tổng quan", menu_analysis: "📈 Phân tích", menu_settings: "⚙️ Cài đặt",
-            title_home: "Tổng quan tài chính", balance_label: "SỐ DƯ HIỆN TẠI", history_label: "Hoạt động gần đây",
+            menu_home: "🏠 Tổng quan", menu_analysis: "📈 Phân tích", menu_settings: "⚙️ Cài đặt", menu_funds: "🐖 Quỹ mục tiêu",
+            title_home: "Tổng quan tài chính", title_funds: "Tích lũy quỹ mục tiêu", balance_label: "SỐ DƯ HIỆN TẠI", history_label: "Hoạt động gần đây",
             add_label: "Thêm giao dịch", btn_save: "Lưu giao dịch", settings_header: "Cấu hình ứng dụng",
             set_lang: "Ngôn ngữ", set_curr: "Đơn vị tiền tệ", btn_reset: "Xóa tất cả dữ liệu"
         },
         en: {
-            menu_home: "🏠 Overview", menu_analysis: "📈 Analysis", menu_settings: "⚙️ Settings",
-            title_home: "Financial Overview", balance_label: "TOTAL BALANCE", history_label: "Recent Activities",
+            menu_home: "🏠 Overview", menu_analysis: "📈 Analysis", menu_settings: "⚙️ Settings", menu_funds: "🐖 Savings Funds",
+            title_home: "Financial Overview", title_funds: "Target Savings Funds", balance_label: "TOTAL BALANCE", history_label: "Recent Activities",
             add_label: "Add Transaction", btn_save: "Save Transaction", settings_header: "App Settings",
             set_lang: "Language", set_curr: "Currency", btn_reset: "Reset All Data"
         }
     };
 
-    // Hàm kiểm tra nếu chọn "Khác"
+    function getFullDateTimeString() {
+        const d = new Date();
+        const dateStr = d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        const timeStr = d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+        return `${dateStr} ${timeStr}`;
+    }
+
     function checkOther(val) {
         const container = document.getElementById('otherCatContainer');
         container.style.display = (val === 'Khác') ? 'block' : 'none';
@@ -152,23 +277,159 @@
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
         document.getElementById(tabId).classList.add('active');
         event.currentTarget.classList.add('active');
+
         document.getElementById('pageTitle').innerText = langPack[config.lang][`title_${tabId}`] || langPack[config.lang][`menu_${tabId}`].substring(3);
+
         if(tabId === 'analysis') renderBigChart();
+        if(tabId === 'funds') renderFunds();
+    }
+
+    // Xử lý bật tắt Dark Mode
+    function toggleDarkMode(isDark) {
+        if (isDark) {
+            document.body.classList.add('dark-mode');
+        } else {
+            document.body.classList.remove('dark-mode');
+        }
+        config.darkMode = isDark;
+        localStorage.setItem('fin_config', JSON.stringify(config));
+        if (bigChart) renderBigChart(); // Vẽ lại chart để nhận màu chữ mới
+    }
+
+    function createFund() {
+        const name = document.getElementById('fundNameInput').value.trim();
+        const targetVal = parseFloat(document.getElementById('fundTargetInput').value);
+
+        if(!name) return alert("Vui lòng điền tên quỹ mục tiêu!");
+        if(!targetVal || targetVal <= 0) return alert("Vui lòng điền số tiền tích lũy hợp lệ!");
+
+        const saveTarget = config.curr === 'USD' ? targetVal * 25000 : targetVal;
+        funds.push({ id: Date.now(), name: name, target: saveTarget });
+        localStorage.setItem('fin_funds', JSON.stringify(funds));
+        alert(`Đã tạo quỹ [${name}] thành công!`);
+        document.getElementById('fundNameInput').value = '';
+        document.getElementById('fundTargetInput').value = '';
+        renderFunds();
+    }
+
+    function deleteFund(id) {
+        if(confirm("Xóa quỹ này? Lịch sử nạp/rút của quỹ vẫn được giữ lại để không làm lệch số dư tổng.")) {
+            funds = funds.filter(f => f.id !== id);
+            localStorage.setItem('fin_funds', JSON.stringify(funds));
+            renderFunds();
+        }
+    }
+
+    function getFundBalance(fundName) {
+        let balance = 0;
+        transactions.forEach(t => {
+            if (t.cat === "🐖 Nạp quỹ: " + fundName) balance += t.amt;
+            else if (t.cat === "🐖 Rút quỹ: " + fundName) balance -= t.amt;
+        });
+        return balance;
+    }
+
+    function handleFundTransaction(fundId, actionType) {
+        const inputEl = document.getElementById(`amount-${fundId}`);
+        const inputVal = parseFloat(inputEl.value);
+
+        if (!inputVal || inputVal <= 0) return alert("Vui lòng nhập số tiền hợp lệ!");
+
+        const fund = funds.find(f => f.id === fundId);
+        if (!fund) return;
+
+        const finalAmount = config.curr === 'USD' ? inputVal * 25000 : inputVal;
+        const currentFundBal = getFundBalance(fund.name);
+
+        if (actionType === 'deposit') {
+            if (currentFundBal >= fund.target) {
+                alert(`Nhắc nhở: Quỹ [${fund.name}] này đã hoàn thành chỉ tiêu đề ra rồi nhé!`);
+            }
+            transactions.unshift({
+                id: Date.now(),
+                cat: "🐖 Nạp quỹ: " + fund.name,
+                amt: finalAmount,
+                type: 'expense',
+                date: getFullDateTimeString()
+            });
+            alert(`Đã nạp thêm ${inputVal.toLocaleString()}${config.curr === 'VND' ? 'đ' : '$'} vào quỹ [${fund.name}]`);
+        } else if (actionType === 'withdraw') {
+            if (finalAmount > currentFundBal) {
+                return alert(`Không đủ tiền! Số dư của quỹ: ${(config.curr === 'USD' ? currentFundBal / 25000 : currentFundBal).toLocaleString()}${config.curr === 'VND' ? 'đ' : '$'}`);
+            }
+            transactions.unshift({
+                id: Date.now(),
+                cat: "🐖 Rút quỹ: " + fund.name,
+                amt: finalAmount,
+                type: 'income',
+                date: getFullDateTimeString()
+            });
+            alert(`Đã rút ${inputVal.toLocaleString()}${config.curr === 'VND' ? 'đ' : '$'} từ quỹ [${fund.name}] về ví tổng.`);
+        }
+        inputEl.value = '';
+        updateUI();
+    }
+
+    function renderFunds() {
+        const container = document.getElementById('fundListContainer');
+        container.innerHTML = '';
+        if(funds.length === 0) {
+            container.innerHTML = `<p style="text-align:center; color: var(--text-light); font-size:14px; padding:20px;">Chưa có quỹ mục tiêu nào được tạo.</p>`;
+            return;
+        }
+        funds.forEach(fund => {
+            let currentBalance = getFundBalance(fund.name);
+            if (currentBalance < 0) currentBalance = 0;
+            let displayTarget = config.curr === 'USD' ? fund.target / 25000 : fund.target;
+            let displayCurrent = config.curr === 'USD' ? currentBalance / 25000 : currentBalance;
+            let currencySign = config.curr === 'VND' ? 'đ' : '$';
+
+            let rawPercent = (displayCurrent / displayTarget) * 100;
+            let percent = Math.min(rawPercent, 100).toFixed(1);
+
+            let isCompleted = currentBalance >= fund.target;
+            let statusText = isCompleted ? "🎉 Đã hoàn thành xuất sắc mục tiêu!" : "🌱 Đang tích lũy...";
+            let statusClass = isCompleted ? "status-badge status-completed" : "status-badge status-ongoing";
+            let progressColor = isCompleted ? "var(--success-gold)" : "var(--income)";
+
+            container.innerHTML += `
+                <div class="fund-item">
+                    <div class="fund-meta">
+                        <span><strong>✨ ${fund.name}</strong> (${rawPercent.toFixed(1)}%)</span>
+                        <span>${displayCurrent.toLocaleString()}${currencySign} / ${displayTarget.toLocaleString()}${currencySign}</span>
+                    </div>
+                    <div class="progress-bg">
+                        <div class="progress-fill" style="width: ${percent}%; background: ${progressColor};"></div>
+                    </div>
+                    <div class="${statusClass}">${statusText}</div>
+                    <div class="fund-controls">
+                        <input type="number" id="amount-${fund.id}" placeholder="Số tiền...">
+                        <button class="btn-action btn-deposit" onclick="handleFundTransaction(${fund.id}, 'deposit')">📥 Nạp</button>
+                        <button class="btn-action btn-withdraw" onclick="handleFundTransaction(${fund.id}, 'withdraw')">📤 Rút</button>
+                        <button class="btn-delete" style="margin-left: auto;" onclick="deleteFund(${fund.id})">🗑️</button>
+                    </div>
+                </div>
+            `;
+        });
     }
 
     function addTransaction() {
         let cat = document.getElementById('cat').value;
-        const otherVal = document.getElementById('otherValue').value;
+        const otherVal = document.getElementById('otherValue').value.trim();
         const amtVal = parseFloat(document.getElementById('amt').value);
 
         if(cat === 'Khác' && otherVal) cat = "✨ " + otherVal;
         if(!amtVal) return alert("Vui lòng nhập tiền!");
 
         const saveAmt = config.curr === 'USD' ? amtVal * 25000 : amtVal;
-        transactions.unshift({ id: Date.now(), cat, amt: saveAmt, type: document.getElementById('type').value, date: new Date().toLocaleDateString('vi-VN') });
-
+        transactions.unshift({
+            id: Date.now(),
+            cat,
+            amt: saveAmt,
+            type: document.getElementById('type').value,
+            date: getFullDateTimeString()
+        });
         updateUI();
-        // Reset form
         document.getElementById('amt').value = '';
         document.getElementById('otherValue').value = '';
         document.getElementById('cat').value = 'Ăn uống';
@@ -176,7 +437,7 @@
     }
 
     function deleteTransaction(id) {
-        if(confirm("Xóa giao dịch này?")) {
+        if(confirm("Xóa giao dịch này? Nếu đây là lịch sử nạp/rút quỹ, số dư của quỹ tương ứng sẽ tự động hoàn tác.")) {
             transactions = transactions.filter(t => t.id !== id);
             updateUI();
         }
@@ -188,13 +449,34 @@
         body.innerHTML = '';
         let bal = 0, chartData = {};
 
+        let currentMonthStr = "/" + String(new Date().getMonth() + 1).padStart(2, '0') + "/"; // Định dạng mẫu: "/05/" cho tháng 5
+        let currentMonthExpense = 0;
+
         transactions.forEach(t => {
             let displayAmt = config.curr === 'USD' ? t.amt / 25000 : t.amt;
             if(t.type === 'income') bal += displayAmt;
-            else { bal -= displayAmt; chartData[t.cat] = (chartData[t.cat] || 0) + displayAmt; }
+            else {
+                bal -= displayAmt;
+                chartData[t.cat] = (chartData[t.cat] || 0) + displayAmt;
+
+                // Tính tổng tiền chi tiêu của tháng hiện tại để quét hạn mức
+                if (t.date && t.date.includes(currentMonthStr)) {
+                    currentMonthExpense += displayAmt;
+                }
+            }
+
+            let transactionTime = t.date;
+            if (transactionTime && !transactionTime.includes(':')) {
+                const legacyDate = new Date(t.id);
+                const timeStr = legacyDate.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', hour12: false });
+                transactionTime = `${t.date} ${timeStr}`;
+            }
 
             body.innerHTML += `<tr>
-                <td><strong>${t.cat}</strong></td>
+                <td>
+                    <strong>${t.cat}</strong>
+                    <span class="timestamp">⏱️ ${transactionTime || 'Không rõ thời gian'}</span>
+                </td>
                 <td style="color:${t.type==='income'?'var(--income)':'var(--expense)'}; font-weight:700">
                     ${t.type==='income'?'+':'-'}${displayAmt.toLocaleString()}${config.curr==='VND'?'đ':'$'}
                 </td>
@@ -202,38 +484,141 @@
             </tr>`;
         });
         document.getElementById('mainBalance').innerText = bal.toLocaleString() + (config.curr === 'VND' ? 'đ' : '$');
+
+        // KIỂM TRA VÀ HIỂN THỊ CẢNH BÁO HẠN MỨC CHI TIÊU
+        const alertBox = document.getElementById('budgetAlertBox');
+        let activeBudget = config.monthlyBudget || 0;
+        if(activeBudget > 0 && currentMonthExpense > activeBudget) {
+            alertBox.style.display = 'block';
+            alertBox.innerHTML = `⚠️ Cảnh báo: Chi tiêu tháng này (${currentMonthExpense.toLocaleString()}${config.curr === 'VND'?'đ':'$'}) đã vượt quá hạn mức cho phép (${activeBudget.toLocaleString()}${config.curr === 'VND'?'đ':'$'})!`;
+        } else {
+            alertBox.style.display = 'none';
+        }
+
         renderMiniChart(chartData);
+        renderFunds();
     }
 
     function renderMiniChart(chartData) {
         const ctx = document.getElementById('miniChart').getContext('2d');
         if(miniChart) miniChart.destroy();
+
+        let textColor = config.darkMode ? '#94a3b8' : '#64748b';
         miniChart = new Chart(ctx, {
             type: 'doughnut',
             data: { labels: Object.keys(chartData), datasets: [{ data: Object.values(chartData), backgroundColor: ['#6ee7b7','#fb923c','#60a5fa','#f472b6','#a78bfa','#94a3b8'], borderWidth: 0 }] },
-            options: { cutout: '75%', plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: {size:10} } } } }
+            options: { cutout: '75%', plugins: { legend: { position: 'bottom', labels: { color: textColor, boxWidth: 10, font: {size:10} } } } }
         });
     }
 
     function renderBigChart() {
         const ctx = document.getElementById('bigChart').getContext('2d');
         if(bigChart) bigChart.destroy();
+
+        let monthlyIncome = Array(12).fill(0);
+        let monthlyExpense = Array(12).fill(0);
+
+        transactions.forEach(t => {
+            if (t.date) {
+                const parts = t.date.split('/');
+                if (parts.length >= 2) {
+                    const monthIndex = parseInt(parts[1], 10) - 1;
+                    if (monthIndex >= 0 && monthIndex < 12) {
+                        let displayAmt = config.curr === 'USD' ? t.amt / 25000 : t.amt;
+                        if (t.type === 'income') { monthlyIncome[monthIndex] += displayAmt; }
+                        else if (t.type === 'expense') { monthlyExpense[monthIndex] += displayAmt; }
+                    }
+                }
+            }
+        });
+
+        const labelsVI = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'];
+        const labelsEN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const activeLabels = config.lang === 'vi' ? labelsVI : labelsEN;
+
+        const reportBody = document.getElementById('growthReportBody');
+        reportBody.innerHTML = '';
+        let currencySign = config.curr === 'VND' ? 'đ' : '$';
+
+        labelsVI.forEach((monthName, i) => {
+            let currentInc = monthlyIncome[i];
+            let currentExp = monthlyExpense[i];
+            let incDiffStr = '';
+            let expDiffStr = '';
+
+            if (i === 0) {
+                incDiffStr = `<span class="trend-tag trend-neutral">- Gốc -</span>`;
+                expDiffStr = `<span class="trend-tag trend-neutral">- Gốc -</span>`;
+            } else {
+                let prevInc = monthlyIncome[i - 1];
+                let prevExp = monthlyExpense[i - 1];
+
+                if (prevInc === 0) {
+                    incDiffStr = currentInc > 0 ? `<span class="trend-tag trend-up">▲ Khởi tạo</span>` : `<span class="trend-tag trend-neutral">0%</span>`;
+                } else {
+                    let pctInc = (((currentInc - prevInc) / prevInc) * 100).toFixed(1);
+                    if (pctInc > 0) incDiffStr = `<span class="trend-tag trend-up">🔼 +${pctInc}%</span>`;
+                    else if (pctInc < 0) incDiffStr = `<span class="trend-tag trend-down">🔽 ${pctInc}%</span>`;
+                    else incDiffStr = `<span class="trend-tag trend-neutral">0%</span>`;
+                }
+
+                if (prevExp === 0) {
+                    expDiffStr = currentExp > 0 ? `<span class="trend-tag trend-down">▲ Khởi tạo</span>` : `<span class="trend-tag trend-neutral">0%</span>`;
+                } else {
+                    let pctExp = (((currentExp - prevExp) / prevExp) * 100).toFixed(1);
+                    if (pctExp > 0) expDiffStr = `<span class="trend-tag trend-down">🔼 +${pctExp}%</span>`;
+                    else if (pctExp < 0) expDiffStr = `<span class="trend-tag trend-up">🔽 ${pctExp}%</span>`;
+                    else expDiffStr = `<span class="trend-tag trend-neutral">0%</span>`;
+                }
+            }
+
+            let displayMonthLabel = config.lang === 'vi' ? monthName : labelsEN[i];
+            reportBody.innerHTML += `
+                <tr>
+                    <td><strong>${displayMonthLabel}</strong></td>
+                    <td>${currentInc.toLocaleString()}${currencySign}</td>
+                    <td>${incDiffStr}</td>
+                    <td>${currentExp.toLocaleString()}${currencySign}</td>
+                    <td>${expDiffStr}</td>
+                </tr>
+            `;
+        });
+
+        let labelColor = config.darkMode ? '#94a3b8' : '#475569';
+        let gridColor = config.darkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+
         bigChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ['Tháng 3', 'Tháng 4', 'Tháng 5'],
+                labels: activeLabels,
                 datasets: [
-                    { label: config.lang==='vi'?'Thu nhập':'Income', data: [5000000, 7000000, 8000000], backgroundColor: '#10b981' },
-                    { label: config.lang==='vi'?'Chi tiêu':'Expense', data: [3000000, 4500000, 3500000], backgroundColor: '#ef4444' }
+                    { label: config.lang === 'vi' ? 'Tổng Thu nhập (+)' : 'Total Income', data: monthlyIncome, backgroundColor: '#10b981', borderRadius: 6 },
+                    { label: config.lang === 'vi' ? 'Tổng Chi tiêu (-)' : 'Total Expense', data: monthlyExpense, backgroundColor: '#ef4444', borderRadius: 6 }
                 ]
             },
-            options: { responsive: true, maintainAspectRatio: false }
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: labelColor, callback: function(value) { return value.toLocaleString() + (config.curr === 'VND' ? 'đ' : '$'); } } },
+                    x: { grid: { color: gridColor }, ticks: { color: labelColor } }
+                },
+                plugins: {
+                    legend: { labels: { color: labelColor } },
+                    tooltip: { callbacks: { label: function(context) { let label = context.dataset.label || ''; if (label) label += ': '; if (context.parsed.y !== null) { label += context.parsed.y.toLocaleString() + (config.curr === 'VND' ? 'đ' : '$'); } return label; } } }
+                }
+            }
         });
     }
 
     function updateSettings() {
         config.lang = document.getElementById('setLang').value;
         config.curr = document.getElementById('setCurr').value;
+
+        // Lưu giá trị hạn mức tháng người dùng nhập vào
+        let rawBudget = parseFloat(document.getElementById('setMonthlyBudget').value);
+        config.monthlyBudget = (!isNaN(rawBudget) && rawBudget > 0) ? rawBudget : 0;
+
         localStorage.setItem('fin_config', JSON.stringify(config));
         applyLang();
         updateUI();
@@ -244,9 +629,15 @@
         document.querySelectorAll('[data-lang]').forEach(el => { el.innerText = p[el.getAttribute('data-lang')]; });
         document.getElementById('setLang').value = config.lang;
         document.getElementById('setCurr').value = config.curr;
+        document.getElementById('setMonthlyBudget').value = config.monthlyBudget || '';
+        document.getElementById('darkModeToggle').checked = config.darkMode || false;
+
+        // Đảm bảo ép giao diện đúng chế độ khi load trang
+        toggleDarkMode(config.darkMode);
+        document.getElementById('pageTitle').innerText = p.title_home;
     }
 
-    function resetData() { if(confirm("Xóa hết?")) { localStorage.clear(); location.reload(); } }
+    function resetData() { if(confirm("Xóa hết dữ liệu và cấu hình?")) { localStorage.clear(); location.reload(); } }
 
     applyLang();
     updateUI();
