@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FinanceHub - Hạn Mức & Dark Mode</title>
+    <title>FinanceHub</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 
@@ -17,7 +17,6 @@
             --card-item: rgba(255, 255, 255, 0.5);
         }
 
-        /* Thêm cấu hình biến màu cho Dark Mode */
         body.dark-mode {
             --bg: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
             --glass: rgba(30, 41, 59, 0.7);
@@ -28,7 +27,6 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: var(--bg); min-height: 100vh; display: flex; padding: 20px; color: var(--text); transition: background 0.3s ease; }
 
-        /* Sidebar */
         .sidebar {
             width: 260px; background: var(--glass); backdrop-filter: blur(15px);
             border-radius: 24px; padding: 40px 20px; display: flex; flex-direction: column; gap: 10px;
@@ -38,7 +36,6 @@
         body.dark-mode .nav-item.active { background: #334155; color: #60a5fa; }
         .nav-item.active { background: white; color: var(--primary); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
 
-        /* Main Content */
         .main-content { flex: 1; padding-left: 30px; display: flex; flex-direction: column; gap: 25px; }
         .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 25px; }
         .card { background: var(--glass); backdrop-filter: blur(15px); border-radius: 24px; padding: 25px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
@@ -58,7 +55,6 @@
 
         #otherCatContainer { display: none; }
 
-        /* Quỹ */
         .fund-item { margin-bottom: 25px; padding: 20px; background: var(--card-item); border-radius: 20px; border: 1px solid var(--border); }
         .fund-meta { display: flex; justify-content: space-between; font-size: 14px; font-weight: 600; margin-bottom: 8px; }
         .progress-bg { width: 100%; height: 12px; background: #e2e8f0; border-radius: 6px; overflow: hidden; margin-bottom: 12px; }
@@ -71,7 +67,6 @@
         .status-completed { background: #fef9c3; color: #a16207; animation: pulse 2s infinite; }
         body.dark-mode .status-completed { background: #713f12; color: #fef08a; }
 
-        /* Bảng Phân Tích */
         .analysis-report { width: 100%; border-collapse: collapse; margin-top: 25px; font-size: 14px; }
         .analysis-report th { text-align: left; padding: 12px; background: rgba(0,0,0,0.03); color: var(--text-light); font-weight: 700; }
         body.dark-mode .analysis-report th { background: rgba(255,255,255,0.03); }
@@ -81,11 +76,9 @@
         .trend-down { color: var(--expense); }
         .trend-neutral { color: var(--text-light); font-weight: normal; }
 
-        /* Hạn mức nguy hiểm */
         .budget-alert { background: #fee2e2; color: #b91c1c; padding: 10px 15px; border-radius: 12px; font-size: 13px; font-weight: 700; text-align: center; margin-top: 10px; display: none; animation: pulse 2s infinite; }
         body.dark-mode .budget-alert { background: #7f1d1d; color: #fca5a5; }
 
-        /* Nút switch dark mode kiểu iOS */
         .switch-container { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
         .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
         .switch input { opacity: 0; width: 0; height: 0; }
@@ -240,7 +233,6 @@
 
 <script>
     let transactions = JSON.parse(localStorage.getItem('fin_final_v5')) || [];
-    // Nâng cấp cấu hình config có sẵn thêm trường darkMode và monthlyBudget
     let config = JSON.parse(localStorage.getItem('fin_config')) || { lang: 'vi', curr: 'VND', darkMode: false, monthlyBudget: 0 };
     let funds = JSON.parse(localStorage.getItem('fin_funds')) || [];
     let miniChart, bigChart;
@@ -284,7 +276,6 @@
         if(tabId === 'funds') renderFunds();
     }
 
-    // Xử lý bật tắt Dark Mode
     function toggleDarkMode(isDark) {
         if (isDark) {
             document.body.classList.add('dark-mode');
@@ -293,7 +284,7 @@
         }
         config.darkMode = isDark;
         localStorage.setItem('fin_config', JSON.stringify(config));
-        if (bigChart) renderBigChart(); // Vẽ lại chart để nhận màu chữ mới
+        if (bigChart) renderBigChart();
     }
 
     function createFund() {
@@ -459,7 +450,6 @@
                 bal -= displayAmt;
                 chartData[t.cat] = (chartData[t.cat] || 0) + displayAmt;
 
-                // Tính tổng tiền chi tiêu của tháng hiện tại để quét hạn mức
                 if (t.date && t.date.includes(currentMonthStr)) {
                     currentMonthExpense += displayAmt;
                 }
@@ -485,7 +475,6 @@
         });
         document.getElementById('mainBalance').innerText = bal.toLocaleString() + (config.curr === 'VND' ? 'đ' : '$');
 
-        // KIỂM TRA VÀ HIỂN THỊ CẢNH BÁO HẠN MỨC CHI TIÊU
         const alertBox = document.getElementById('budgetAlertBox');
         let activeBudget = config.monthlyBudget || 0;
         if(activeBudget > 0 && currentMonthExpense > activeBudget) {
@@ -615,7 +604,6 @@
         config.lang = document.getElementById('setLang').value;
         config.curr = document.getElementById('setCurr').value;
 
-        // Lưu giá trị hạn mức tháng người dùng nhập vào
         let rawBudget = parseFloat(document.getElementById('setMonthlyBudget').value);
         config.monthlyBudget = (!isNaN(rawBudget) && rawBudget > 0) ? rawBudget : 0;
 
@@ -632,7 +620,6 @@
         document.getElementById('setMonthlyBudget').value = config.monthlyBudget || '';
         document.getElementById('darkModeToggle').checked = config.darkMode || false;
 
-        // Đảm bảo ép giao diện đúng chế độ khi load trang
         toggleDarkMode(config.darkMode);
         document.getElementById('pageTitle').innerText = p.title_home;
     }
